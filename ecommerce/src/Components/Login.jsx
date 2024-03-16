@@ -7,32 +7,68 @@ import { auth } from "./Firebase/Firebase";
 import { toast } from 'react-toastify';
 
 const Login = () => {
-    // const navigateHome=useNavigate();
-    // const [userdata, setUserData] = useState({
-    //   email: "",
-    //   password: "",
-    // });
+
+  const[error,setError]=useState({})
+
   
-    // const handlechange = (e) => {
-    //   let name = e.target.name;
-    //   let value = e.target.value;
-    //   setUserData({ ...userdata, [name]: value });
-    // };
+
+    const navigateHome=useNavigate();
+    const [userdata, setUserData] = useState({
+      email: "",
+      password: "",
+    });
   
-    // const handlesubmit = (e) => {
-    //   e.preventDefault();
-    //   signInWithEmailAndPassword(auth, userdata.email, userdata.password)
-    //     .then((res) => {
-    //         navigateHome("/")
-    //         toast.success("Login Successfully")
-    //     })
-    //     .catch((err) => {
-    //       toast.error(err.message);
-    //     });
+    const handlechange = (e) => {
+      let name = e.target.name;
+      let value = e.target.value;
+      setUserData({ ...userdata, [name]: value });
+    };
+  
+    const handlesubmit = (e) => {
+
+
+      let showerrormsg={}
+
+      if(userdata.email===""){
+        showerrormsg.email="Please Enter Email"
+      }else if(userdata.email.indexOf("@")===0){
+        showerrormsg.email="Invalud position of @"
+      }else if(!userdata.email.includes("@")){
+          showerrormsg.email="Invalid Email"
+      }else if(userdata.email.charAt(userdata.email.length-4)!=="." && userdata.email.charAt(userdata.email.length-3)!=="."){
+          showerrormsg.email="Invalid Email"
+      }
+      else{
+        setError({email:""})
+      }
+
+      if(userdata.password===""){
+        showerrormsg.password="Please Enter your Password"
+      }else if(userdata.password.length<8){
+        showerrormsg.password="Password should contain 8 character"
+      }else if(userdata.password.search(/["@","#"."$","&","*"]/)==-1){
+           showerrormsg.password="Password should contain at least one special character"
+      }else if(userdata.password.search(/[0-9]/)==-1){
+        showerrormsg.password="Password Should Contain at least one digit"
+      }else{
+        setError({password:""})
+      }
+
+      setError(showerrormsg)
+
+      e.preventDefault();
+      signInWithEmailAndPassword(auth, userdata.email, userdata.password)
+        .then((res) => {
+            navigateHome("/")
+            toast.success("Login Successfully")
+        })
+        .catch((err) => {
+          toast.error(err.message);
+        });
 
        
-    //   //console.log(userdata)
-    // };
+      //console.log(userdata)
+    };
   return (
     <>
           <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -57,11 +93,12 @@ const Login = () => {
                 <input
                   id="email"
                   name="email"
-                  type="email"
+                  type="text"
                   autoComplete="email"
                   onChange={handlechange}
                   className="block w-full h-12 ps-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-2xl sm:leading-6"
                 />
+                 <span className="text-xl text-red-500 ">{error.email}</span>
               </div>
             </div>
 
@@ -80,6 +117,7 @@ const Login = () => {
                   onChange={handlechange}
                   className="block w-full h-12 ps-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-2xl sm:leading-6"
                 />
+                <span className="text-xl text-red-500 ">{error.password}</span>
               </div>
             </div>
 

@@ -3,7 +3,7 @@ import { Myprovider } from "./Context/ProductContext";
 import { NavLink } from "react-router-dom";
 
 const MenCategory = ({ price, image, title ,id}) => {
-  const { allproduct} = Myprovider();
+  const { allproduct,isAuthenticate} = Myprovider();
  // console.log(id);
   return (
     <>

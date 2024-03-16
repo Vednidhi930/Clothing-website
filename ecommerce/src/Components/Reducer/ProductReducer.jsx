@@ -110,6 +110,7 @@ const  ProductReducer=(state,action)=>{
                      else{
                         const cartdetail={
                             id:id,
+                            counter:counter,
                             price:singleproduct.price,
                             title:singleproduct.title,
                             image:singleproduct.image,
@@ -118,7 +119,10 @@ const  ProductReducer=(state,action)=>{
     
                          return{
                             ...state,
-                            cartproduct:[...state.cartproduct,cartdetail]
+                            cartproduct:[...state.cartproduct,cartdetail],
+                            price:cartdetail.price,
+                            discount:cartdetail.price,
+                            delivery:40,
                          }
                      }
 
@@ -135,6 +139,65 @@ const  ProductReducer=(state,action)=>{
                          ...state,
                          cartproduct:removecart
                         }
+
+
+                        case "INCREASE_CART":
+                              // console.log(state.cartproduct)
+                              // console.log(action.payload)
+
+                               let updateamount=state.cartproduct.map((curr)=>{
+                                if(curr.id===action.payload){
+                                    let increaseCount=curr.counter+1
+                                    return{
+                                        ...curr,
+                                        counter:increaseCount,
+                                    }
+                                }
+                               })
+
+                               return{
+                                ...state,
+                                cartproduct:updateamount
+                               }
+
+                               case "DECREASE_CART":
+
+                               let updateamountminus=state.cartproduct.map((curr)=>{
+                                if(curr.id===action.payload){
+                                    let decreaseCount=curr.counter-1
+
+                                     decreaseCount<=1 ? decreaseCount=1 :decreaseCount
+                                    return{
+                                        ...curr,
+                                        counter:decreaseCount,
+                                    }
+                                }
+                               })
+
+                               return{
+                                ...state,
+                                cartproduct:updateamountminus
+                               }
+
+                               case "TOTAL_CART_VALUE":
+
+                               let totalvalue=state.cartproduct.reduce((initialval,curr)=>{
+                                  const{price,counter}=curr;
+                                  initialval=initialval+price*counter
+                                  return initialval 
+                               },0)
+
+                               return{
+                                ...state,
+                                totalprice:totalvalue,
+                               }
+
+                                  
+                                // return{
+                                //     ...state,
+                                //     cartproduct:updateamount
+                                // }
+                           
                   
               
         default:

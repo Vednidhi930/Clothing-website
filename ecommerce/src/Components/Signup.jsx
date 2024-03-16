@@ -15,6 +15,8 @@ const Signup = () => {
     phone: "",
     password: "",
   });
+  const[error,setError]=useState({})
+  
 
   const handlechange = (e) => {
     let name = e.target.name;
@@ -23,22 +25,89 @@ const Signup = () => {
   };
 
   const handlesubmit = (e) => {
+    
+
+    let showerrormsg={}
+
+     
+
+    // for username validation
+
+    if(userdata.username==""){
+           showerrormsg.username="Please Enter Username"
+    }else if(userdata.username.length<=4){
+           showerrormsg.username="Username should have atleast 5 character"
+    }else if(userdata.username.search(/[0-9]/)==-1){
+           showerrormsg.username="Username Contains atleast one number"
+    }else if(userdata.username.search(/["@","#"."$","&","*"]/)==-1){
+     
+      showerrormsg.username="username contains atleast one special character"
+    }else{
+      setError({username:""})
+    }
+     
+    // For phone number validation
+
+    if(userdata.phone===""){
+      showerrormsg.phone="Please Enter phone number"
+    }else if(isNaN(userdata.phone)){
+      showerrormsg.phone="It accepts Only digit"
+    }else if(userdata.phone.length>10){
+      showerrormsg.phone="Phone no should only 10 digit"
+    }else{
+      setError({phone:""})
+    }
+
+    // for passowrd validation
+
+    if(userdata.password===""){
+      showerrormsg.password="Please Enter your Password"
+    }else if(userdata.password.length<8){
+      showerrormsg.password="Password should contain 8 character"
+    }else if(userdata.password.search(/["@","#"."$","&","*"]/)==-1){
+         showerrormsg.password="Password should contain at least one special character"
+    }else if(userdata.password.search(/[0-9]/)==-1){
+      showerrormsg.password="Password Should Contain at least one digit"
+    }else{
+      setError({password:""})
+    }
+
+    // for Email validation
+    if(userdata.email===""){
+      showerrormsg.email="Please Enter Email"
+    }else if(userdata.email.indexOf("@")===0){
+      showerrormsg.email="Invalud position of @"
+    }else if(!userdata.email.includes("@")){
+        showerrormsg.email="Invalid Email"
+    }else if(userdata.email.charAt(userdata.email.length-4)!=="." && userdata.email.charAt(userdata.email.length-3)!=="."){
+        showerrormsg.email="Invalid Email"
+    }
+    else{
+      setError({email:""})
+    }
+
+    setError(showerrormsg)
+
     e.preventDefault();
-    createUserWithEmailAndPassword(auth, userdata.email, userdata.password)
+
+
+     createUserWithEmailAndPassword(auth, userdata.email, userdata.password)
       .then((res) => {
+        navigateLogin("/") 
         const user =res.user;
        
         updateProfile(user,{
             displayName:userdata.username
         })
         toast.success("Registration Successfully")
+        setUserData("")
       })
       .catch((err) => {
         const error=err.message;
-        console.log(error);
+        toast.error(error)
       });
 
-      navigateLogin("/")
+    
     //console.log(userdata)
   };
 
@@ -76,6 +145,7 @@ const Signup = () => {
                   onChange={handlechange}
                   className="block w-full h-12 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-2xl ps-2 sm:leading-6"
                 />
+                <span className="text-xl text-red-500 ">{error.username}</span>
               </div>
             </div>
 
@@ -97,6 +167,7 @@ const Signup = () => {
                   onChange={handlechange}
                   className="block w-full h-12 rounded-md ps-2 border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-2xl sm:leading-6"
                 />
+                <span className="text-xl text-red-500 ">{error.email}</span>
               </div>
 
               <label
@@ -114,6 +185,7 @@ const Signup = () => {
                   onChange={handlechange}
                   className="block w-full h-12 rounded-md ps-2 border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-2xl sm:leading-6"
                 />
+                <span className="text-xl text-red-500 ">{error.phone}</span>
               </div>
 
               <label
@@ -131,6 +203,7 @@ const Signup = () => {
                   onChange={handlechange}
                   className="block w-full h-12 rounded-md ps-2 border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-2xl sm:leading-6"
                 />
+                <span className="text-xl text-red-500 ">{error.password}</span>
               </div>
             </div>
 

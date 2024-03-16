@@ -3,12 +3,24 @@ import axios, { all } from "axios";
 import reducer from "../Reducer/ProductReducer";
 import { auth} from "../Firebase/Firebase";
 import{onAuthStateChanged} from "firebase/auth";
+import { json } from "react-router";
+import { toast } from "react-toastify";
 
 
 
 const ProductContext = createContext();
 
 const url ="https://fakestoreapi.com/products"
+
+const getlocalstoragedata=()=>{
+  const getdata=localStorage.getItem("StyleSpotcart");
+  
+   if(getdata.length===0){
+    return []
+   }else{
+    return JSON.parse(getdata);
+   }
+}
 
 const initialState={
    isloading:false,
@@ -17,16 +29,16 @@ const initialState={
     menproduct:[],
     womenproduct:[],
     singleproduct:{},
-    cartproduct:[],
+    cartproduct:getlocalstoragedata(),
     filter:{
-      text:"",
-    }
+      text:""
+    },
+    totalprice:"",
 }
 
 
 const ProductProvider = ({ children }) => {
     const[state,dispatch]=useReducer(reducer,initialState);
-    const[counter,setCounter]=useState(1);
     const[userprofile,setUserprofile]=useState("")
     const[isAuthenticate,setIsauthenticate]=useState("");
 
@@ -64,7 +76,9 @@ const ProductProvider = ({ children }) => {
     getData(url);
   },[state.filter]);
 
-  
+  //console.log(state.price);
+
+  useEffect(()=>{
     onAuthStateChanged(auth,(user)=>{
       if(user){
         setIsauthenticate(user);
@@ -73,6 +87,8 @@ const ProductProvider = ({ children }) => {
         setUserprofile("")
       }
     })
+  },[])
+    
 
   //console.log(userprofile);
 
@@ -81,21 +97,30 @@ const ProductProvider = ({ children }) => {
   //console.log(state.allproduct)
   const handlecart=(id,singleproduct,counter)=>{
      dispatch({type:"ADD_CART",payload:{singleproduct,id,counter}})
+     toast.success("Item Added Successfully")
   }
 
    const cartdelete=(removeid)=>{
      dispatch({type:"REMOVE_CART_ITEM",payload:{removeid}})
+     toast.success("Item Deleted")
    }
 
-   const handleplus=()=>{
-    setCounter(counter+1)
+   const handleplus=(id)=>{
+    dispatch({type:"INCREASE_CART",payload:id})
+    console.log(id)
    }
 
    //console.log(quantity);
 
-   const handleminus=()=>{
-    counter<=1 ?setCounter(1):setCounter(counter-1)
+   const handleminus=(id)=>{
+    dispatch({type:"DECREASE_CART",payload:id })
+
    }
+
+   useEffect(()=>{
+      dispatch({type:"TOTAL_CART_VALUE"})
+      localStorage.setItem("StyleSpotcart",JSON.stringify(state.cartproduct))
+   },[state.cartproduct])
 
 
   //console.log(state.cartproduct);
@@ -115,7 +140,7 @@ const ProductProvider = ({ children }) => {
   
 
   return (
-    <ProductContext.Provider value={{...state,SearchAllProduct,singlepage,handlecart,cartdelete,handleplus,counter,handleminus,userprofile,isAuthenticate}}>
+    <ProductContext.Provider value={{...state,SearchAllProduct,singlepage,handlecart,cartdelete,handleplus,handleminus,userprofile,isAuthenticate}}>
         {children}
     </ProductContext.Provider>
   );

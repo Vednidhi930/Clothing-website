@@ -16,32 +16,36 @@ const Navbar = () => {
   const {
     SearchAllProduct,
     cartproduct,
-    // userprofile,
-    // isAuthenticate,
+    userprofile,
+    isAuthenticate,
     filter: { text },
   } = Myprovider();
-  // console.log(userprofile);
+  console.log(userprofile);
 
-  // const signout = useNavigate();
+  const signout = useNavigate();
 
-  // const logout = () => {
-  //   signOut(auth).then(() =>{
-  //     toast.warn("Logout Sucesssfully")
-  //     signout("/Login")
-  //   } ).catch((err)=>console.log(err.message));
-  // };
+  const logout = () => {
+    signOut(auth)
+      .then(() => {
+        toast.warn("Logout Sucesssfully");
+        signout("/Login");
+      })
+      .catch((err) => console.log(err.message));
+  };
 
-  //console.log(cartproduct.length);
+  console.log(cartproduct.length);
 
   const [menu, setMenu] = useState(false);
   return (
     <>
-      <nav className="w-screen  flex items-center justify-around z-10">
+      <nav className="w-full  flex items-center justify-around z-10">
         <div className="nav-left w-1/5">
-          <div className="imageDetail w-10 flex items-center">
-            <img src={shopIcon} alt="shopLogo" />
-            <h1 className="lg:text-3xl sm:text-xl">StyleSpot</h1>
-          </div>
+          <NavLink to="/">
+            <div className="imageDetail w-10 flex items-center">
+              <img src={shopIcon} alt="shopLogo" />
+              <h1 className="lg:text-3xl sm:text-xl text-black">StyleSpot</h1>
+            </div>
+          </NavLink>
         </div>
 
         <div className="nav-center w-2/5">
@@ -72,10 +76,10 @@ const Navbar = () => {
         </div>
 
         <div className="nav-end p-3  flex items-center gap-1">
-            <div className="flex items-center gap-1">
-            {/* {isAuthenticate?  <FaUserCheck className="text-3xl"/> :null}
-              <span className="text-2xl text-slate-500">{userprofile}</span> */}
-            </div>
+          <div className="flex items-center gap-1">
+            {isAuthenticate ? <FaUserCheck className="text-3xl" /> : null}
+            <span className="text-2xl text-slate-500">{userprofile}</span>
+          </div>
           <div className="w-full p-2 relative flex items-center">
             <IoSearchOutline className="text-4xl absolute top-auto left-auto p-1" />
             <input
@@ -96,18 +100,18 @@ const Navbar = () => {
             <span className="text-3xl relative right-1 bottom-2 count-num">
               {cartproduct.length}
             </span>
-            {/* {isAuthenticate ? ( */}
-              {/* <button
+            {isAuthenticate ? (
+              <button
                 className="w-20 h-10 bg-black text-white ms-2 rounded-full login-btn"
                 onClick={logout}
               >
                 Logout
               </button>
-            ) : ( */}
+            ) : (
               <button className="w-20 h-10 bg-black text-white ms-2 rounded-full login-btn">
-                <NavLink to="/Login">Login</NavLink>
+                <NavLink to="/Signup">Login</NavLink>
               </button>
-            {/* )} */}
+            )}
 
             <IoReorderThree
               className="text-5xl three-line-icon"
@@ -159,8 +163,8 @@ const Navbar = () => {
             <NavLink to="/Cart">
               <FaCartShopping className="text-5xl" />
               <span className="text-3xl relative bottom-16 left-12">
-              {cartproduct.length}
-            </span>
+                {cartproduct.length}
+              </span>
             </NavLink>
             <button className="w-20 h-10 bg-black text-white ms-2 rounded-full">
               <NavLink to="/Login">Login</NavLink>
